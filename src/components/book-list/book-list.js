@@ -12,27 +12,8 @@ import './book-list.css'
 
 class BookList extends Component {
 
-    getData = async (service, func, errFunc) => {
-        try
-        {
-            const res = await service.getBooks()
-            func(res)
-        }
-        catch (e) {
-            console.log(e)
-            errFunc(e)
-        }
-    }
-
     componentDidMount(){
-        const { 
-            bookstoreService,
-            booksLoaded,
-            booksRequested,
-            booksError, } = this.props
-
-        booksRequested()
-        this.getData(bookstoreService, booksLoaded, booksError)
+        this.props.fetchBooks()
     }
 
     render(){
@@ -62,7 +43,7 @@ const mapStateToProps = ({ books, loading, error }) => {
     return { books, loading, error }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     /**
      * bindActionCreators возвращает точно объект со структурой, описанной ниже
      * Поэтому можно вместо этого громоздкого кода:
@@ -83,12 +64,24 @@ const mapDispatchToProps = (dispatch) => {
       */
 
 
+    //Вместо этого:
 
-    return bindActionCreators({
-        booksLoaded,
-        booksRequested,
-        booksError,
-    }, dispatch)
+    // return bindActionCreators({
+    //     booksLoaded,
+    //     booksRequested,
+    //     booksError,
+    // }, dispatch)
+
+    //Напишу это:
+    const { bookstoreService } = ownProps
+    return {
+        fetchBooks: () => {    
+            dispatch(booksRequested())
+            bookstoreService.getBooks()
+                .then(data => dispatch(booksLoaded(data)))
+                .catch(err => dispatch(booksError(err)) )
+        }
+    }
 }
 
 /**
