@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import BookListItem from '../book-list-item'
 import ErrorIndicator from '../error-indicator'
 import { withBookstoreService } from '../hoc'
-import { booksLoaded, booksRequested, booksError } from '../../actions'
+import { fetchBooks } from '../../actions'
 import Spinner from '../spinner'
 import compose from '../../utils'
 import './book-list.css'
@@ -43,7 +43,7 @@ const mapStateToProps = ({ books, loading, error }) => {
     return { books, loading, error }
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, { bookstoreService }) => {
     /**
      * bindActionCreators возвращает точно объект со структурой, описанной ниже
      * Поэтому можно вместо этого громоздкого кода:
@@ -73,14 +73,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     // }, dispatch)
 
     //Напишу это:
-    const { bookstoreService } = ownProps
     return {
-        fetchBooks: () => {    
-            dispatch(booksRequested())
-            bookstoreService.getBooks()
-                .then(data => dispatch(booksLoaded(data)))
-                .catch(err => dispatch(booksError(err)) )
-        }
+        fetchBooks: fetchBooks(bookstoreService, dispatch)
     }
 }
 
