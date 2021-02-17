@@ -41,7 +41,8 @@ class BookListContainer extends Component {
         if (error) return <ErrorIndicator />
         return <BookList 
                 onAddedToCart={onAddedToCart}
-                books={books}/>
+                books={books}
+                />
     }
 }
 
@@ -52,7 +53,7 @@ const mapStateToProps = ({ books, loading, error }) => {
 const mapDispatchToProps = (dispatch, { bookstoreService }) => {
     return {
         fetchBooks: fetchBooks(bookstoreService, dispatch),
-        onAddedToCart: (id) => dispatch(bookAddedToCart(id))
+        onAddedToCart: (id) => dispatch(bookAddedToCart(id)),
     }
 }
 
